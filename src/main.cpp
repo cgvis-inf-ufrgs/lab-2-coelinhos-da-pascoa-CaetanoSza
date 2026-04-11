@@ -403,38 +403,60 @@ int main(int argc, char *argv[])
 
         for (int i = 0; i < 16; i++)
         {
+
+            int orbitRadio = 2;
+
             float bunnyBaseAngle = i * (2.0f * M_PI / 16.0f);
-
-            float bunnyHeight = 0.5f * sin(g_AngleZ + i); // height is a senoidal value
-
+            float bunnyHeight = 0.75 * sin(g_AngleZ + i); // height is a senoidal value
             glm::mat4 bunnyModel;
+
             if (i % 4 == 0)
             {
                 bunnyModel =
-                    Matrix_Translate(0.0f, 0, -1) *              // put the objects away from the near plane
-                    Matrix_Rotate_Y(g_AngleY + bunnyBaseAngle) * // orbit
-                    Matrix_Translate(0.0f, bunnyHeight, 2) *     // orbit radio
-                    Matrix_Rotate_Z(g_AngleZ) *                  // somersault
-                    Matrix_Rotate_Y(M_PI) *                      // bunny looking to the right
-                    Matrix_Scale(0.25f, 0.25f, 0.25f);           // size
+                    Matrix_Translate(0.0f, 0, -1) *                   // put the objects away from the near plane
+                    Matrix_Rotate_Y(g_AngleY + bunnyBaseAngle) *      // orbit
+                    Matrix_Translate(0.0f, bunnyHeight, orbitRadio) * // orbit radio
+                    Matrix_Rotate_Z(g_AngleZ) *                       // somersault
+                    Matrix_Rotate_Y(M_PI) *                           // bunny looking to the right
+                    Matrix_Scale(0.25f, 0.25f, 0.25f);                // size
             }
             else
             {
                 bunnyModel =
-                    Matrix_Translate(0.0f, 0, -1) *              // put the objects away from the near plane
-                    Matrix_Rotate_Y(g_AngleY + bunnyBaseAngle) * // orbit
-                    Matrix_Translate(0.0f, bunnyHeight, 2) *     // orbit radio
-                    Matrix_Rotate_Y(M_PI) *                      // bunny looking to the right
-                    Matrix_Scale(0.25f, 0.25f, 0.25f);           // size
+                    Matrix_Translate(0.0f, 0, -1) *                   //
+                    Matrix_Rotate_Y(g_AngleY + bunnyBaseAngle) *      // orbit
+                    Matrix_Translate(0.0f, bunnyHeight, orbitRadio) * //
+                    Matrix_Rotate_Y(M_PI) *                           // bunny looking to the right
+                    Matrix_Scale(0.25f, 0.25f, 0.25f);                // size
             }
 
             glUniformMatrix4fv(g_model_uniform, 1, GL_FALSE, glm::value_ptr(bunnyModel));
             glUniform1i(g_object_id_uniform, BUNNY);
             DrawVirtualObject("the_bunny");
 
-            // glUniformMatrix4fv(g_model_uniform, 1, GL_FALSE, glm::value_ptr(model));
-            // glUniform1i(g_object_id_uniform, SPHERE);
-            // DrawVirtualObject("the_sphere");
+            float eggRadio = 0.25;
+
+            glm::mat4 eggModel =
+                Matrix_Translate(0.0f, 0, -1) *                                              // put the objects away from the near plane
+                Matrix_Rotate_Y(g_AngleY + bunnyBaseAngle) *                                 // orbit
+                Matrix_Translate(0.0f, bunnyHeight, orbitRadio) *                            // bunny translation -> like a x rotation
+                Matrix_Translate(0.0f, eggRadio * sin(g_AngleX), eggRadio * cos(g_AngleX)) * // bunny translation -> like a x rotation
+                Matrix_Scale(0.075f, 0.1f, 0.075f);                                          // size
+
+            glUniformMatrix4fv(g_model_uniform, 1, GL_FALSE, glm::value_ptr(eggModel));
+            glUniform1i(g_object_id_uniform, SPHERE);
+            DrawVirtualObject("the_sphere");
+
+            eggModel =
+                Matrix_Translate(0.0f, 0, -1) *                                                            // put the objects away from the near plane
+                Matrix_Rotate_Y(g_AngleY + bunnyBaseAngle) *                                               // orbit
+                Matrix_Translate(0.0f, bunnyHeight, orbitRadio) *                                          // bunny translation -> like a x rotation
+                Matrix_Translate(0.0f, eggRadio * sin(g_AngleX + M_PI), eggRadio * cos(g_AngleX + M_PI)) * // bunny translation -> like a x rotation
+                Matrix_Scale(0.075f, 0.1f, 0.075f);                                                        // size
+
+            glUniformMatrix4fv(g_model_uniform, 1, GL_FALSE, glm::value_ptr(eggModel));
+            glUniform1i(g_object_id_uniform, SPHERE);
+            DrawVirtualObject("the_sphere");
         }
 
         g_AngleX += (delta / 5);
